@@ -35,13 +35,14 @@ public class ListClient {
         fromServer = fromServer.replace("[", "").replace("]", "").trim();
         String[] numbs = fromServer.split(",");
         //Find Average of Random List
-        Integer total = 0;
+        Float total = 0.0f;
         for(String n:numbs){
           n=n.strip(); // Remove whitespace
           Integer number = Integer.parseInt(n);
           total+=number;
         }
-        System.out.printf("\nThe average is %d\n",total/numbs.length);
+        Float average = total/numbs.length;
+        System.out.printf("\nThe average is %f\n",average);
 
         
     

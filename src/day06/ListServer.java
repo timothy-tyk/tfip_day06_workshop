@@ -9,6 +9,8 @@ import java.net.Socket;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class ListServer {
   public static void main(String[] args) {
@@ -17,6 +19,10 @@ public class ListServer {
     try {
       ServerSocket server = new ServerSocket(PORT);
       System.out.printf("Listening on PORT %s\n",PORT);
+
+      //Start Threads
+      ExecutorService threadpool = Executors.newFixedThreadPool(3);
+
       while(true){
         //wait for a connection
         System.out.println("Waiting for connections.");
@@ -38,15 +44,13 @@ public class ListServer {
           Integer limit = Integer.parseInt(fromClient[1]);
 
           System.out.printf("Recieved: %d, %d\n",n,limit);
-          //Generate Random Number List
-          List<Integer> randomList = getRandomNumbers(n,limit);
-          System.out.println(randomList.toString());
-          // Send Random List to Client
-          dos.writeUTF(randomList.toString());
-          dos.flush();
-          System.out.println("Sending Random List to Client.");
-          dos.close();
 
+          List<Integer> randomNumbers = new LinkedList<Integer>();
+          // Send RandomNumList to Client by assigning thread to run, pass in socket so that the run method can do the output sending
+          RandomNumList thr = new RandomNumList(n, limit, randomNumbers, socket);
+          threadpool.submit(thr);
+
+          System.out.println("Sending Random List to Client.");
         }
 
       }
